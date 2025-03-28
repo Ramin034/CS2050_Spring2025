@@ -5,7 +5,9 @@ import java.util.Scanner;
 
 /**
  * Main class to test dealership functionalities.
+ 
  */
+/**
 public class DealershipExceptionHandling
 {
 	public static void main(String[] args)
@@ -56,6 +58,7 @@ public class DealershipExceptionHandling
 	/**
 	 * Reads car data from a file and adds them to the dealership.
 	 */
+/**
 	public static void dealershipSetUp(Dealership dealership, String filename) throws FileNotFoundException
 	{
 		Scanner fileScanner = null;
@@ -84,6 +87,7 @@ public class DealershipExceptionHandling
  * Custom Exception for Invalid Car Count. Ensures maxNumCars is within a valid
  * range.
  */
+/**
 class InvalidCarCountException extends Exception
 {
 	// Do not worry about this part - without it there is a warning 
@@ -99,6 +103,7 @@ class InvalidCarCountException extends Exception
 /**
  * Represents a single Car with make, model, and price attributes.
  */
+/**
 class Car
 {
 	private String make;
@@ -131,6 +136,7 @@ class Car
 /**
  * Represents a Car Dealership that manages a list of cars.
  */
+/**
 class Dealership
 {
 	private String name;
@@ -140,7 +146,7 @@ class Dealership
 	/**
 	 * Constructor with exception handling to validate maxNumCars.
 	 */
-	public Dealership(String name, int maxNumCars) throws InvalidCarCountException
+	/**public Dealership(String name, int maxNumCars) throws InvalidCarCountException
 	{
 		setMaxNumCars(maxNumCars);
 		this.name = name;
@@ -151,7 +157,7 @@ class Dealership
 	/**
 	 * Validates maxNumCars before setting it.
 	 */
-	private void setMaxNumCars(int maxNumCars) throws InvalidCarCountException
+	/**private void setMaxNumCars(int maxNumCars) throws InvalidCarCountException
 	{
 		if (maxNumCars <= 0)
 		{
@@ -175,6 +181,7 @@ class Dealership
 	/**
 	 * Adds a new car to the dealership if there is space.
 	 */
+	/**
 	public void addCar(Car carToAdd)
 	{
 		if (numCars < cars.length)
@@ -191,7 +198,7 @@ class Dealership
 	/**
 	 * Finds the car with the highest price in the dealership.
 	 */
-	public Car findMostExpensiveCar()
+	/**public Car findMostExpensiveCar()
 	{
 		if (numCars == 0)
 		{
@@ -214,7 +221,7 @@ class Dealership
 	/**
 	 * Displays all cars in the dealership.
 	 */
-	public void displayCars()
+	/**public void displayCars()
 	{
 		if (numCars == 0)
 		{
@@ -233,4 +240,4 @@ class Dealership
 	}
 }
 
-
+*/

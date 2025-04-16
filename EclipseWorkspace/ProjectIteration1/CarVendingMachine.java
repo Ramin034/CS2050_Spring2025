@@ -1,12 +1,41 @@
+/**
+ * 
+ * @author Ramin Akbari
+ * @version 3/28/25
+ */
+
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 
-
+/**
+* 
+* the CarVendingMachine class is a car vending machine
+* it uses a menu to allow a user to navigate through
+* 
+* features:
+* load in a file of cars
+* display cars
+* retrieve car
+* sort cars by price
+* sort cars by year
+* 
+* default constructor for CarVendingMachine class
+* initializes the vending machine system
+*/
 public class CarVendingMachine {
-
+	//no initialization need for this class
+	
+	/**
+	 * The code give the user options that read from a file, display, retrieve,
+	 * and sort them.
+	 * 
+	 * @param args Command-line arguments (not used in this program).
+	 * @throws IOException input output operations fails
+	 */
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
 		int floors = 0;
@@ -92,6 +121,9 @@ public class CarVendingMachine {
 	}
 
 
+/**
+ * A car with a name, car make, year, and a price
+ */
 
 class Car{
 	private String carName;
@@ -100,6 +132,13 @@ class Car{
 	private double price;
 	
 	
+	/**
+	 * contrsucts a car with the following parameter
+	 * @param carName the name of the car
+	 * @param make the cars make
+	 * @param year the year of the car
+	 * @param price the price of the car
+	 */
 	public Car(String carName, String make, int year, double price) {
 		this.carName =  carName;
 		this.make = make;
@@ -129,13 +168,26 @@ class Car{
 	}
 }
 
+
 class VendingMachine {
 	private Car tower[][];
 	
+	/**
+	 * constructs a vending machine with the following parameters
+	 * @param floor the number of floors
+	 * @param space the number of spaces in each floor
+	 */
 	public VendingMachine(int floor, int space) {
 		tower = new Car[floor][space];
 	}
 	
+	// adds cars to the 2d array
+	/**
+	 * adds cars to the 2d array
+	 * @param floor which floor the car will be placed
+	 * @param space which space the car will be placed
+	 * @param cars the car object that is added
+	 */
 	public void addCar(int floor, int space, Car cars) {
 		if(floor < tower.length && space < tower[0].length && tower[floor][space]== null) {
 			tower[floor][space] = cars;
@@ -147,6 +199,8 @@ class VendingMachine {
 		}
 	}
 	
+	
+	//displays all the cars and their locations
 	public void displayVM() {
 		for(int row=0; row<tower.length; row++) {
 			System.out.println("Floor " + (row + 1) + ": ");
@@ -164,6 +218,8 @@ class VendingMachine {
 		}
 	}
 	
+	
+	//retrieves a car from a specific location and fills the spot with null
 	public void retrieveCar(int floor, int space) {
 		if(floor < tower.length && space < tower[0].length && 
 				tower[floor][space] != null) {
@@ -178,6 +234,8 @@ class VendingMachine {
 		}
 	}
 	
+	
+	//sorts the price of the cars from lowest to highest
 	public void sortByPrice() {
 		int maxCars = 0;
 		int index = 0;
@@ -230,6 +288,7 @@ class VendingMachine {
 		}
 	}
 	
+	//sorts the cars by year from oldest to newest
 	public void sortByYear() {
 		int maxCars = 0;
 		int index = 0;

@@ -62,6 +62,7 @@ class Bulldog extends Canine implements Pet {
      System.out.println(getName() + " is eating " + getFood() + ".");
  }
 
+ //interface methods are overridden to fit subclass behavior
  @Override
  public void beFriendly() {
      System.out.println(getName() + " is wagging its tail happily!");

@@ -32,7 +32,7 @@ public class FixSinglyLinkedOrderedList
 
 class NodeFix {
     int data;
-    NodeFix next;
+    NodeFix next; // self referential 
 
     public NodeFix(int data) {
         this.data = data;

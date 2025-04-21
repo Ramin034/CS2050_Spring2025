@@ -106,13 +106,30 @@ class DoublyLinkedListL18
 		System.out.println("Implement delete node:");
 		NodeL18 current = head;
 		NodeL18 previous = null;
+		boolean found = false;
 		
-		while(current != null && current.data != data) {
-			previous = current;
-			current = current.next;
-		}
-		if(current != null) {
-			
+		while(current != null && !found) {
+			if(current.data==data) {
+				found=true;
+			}
+			else {
+				previous = current;
+				current = current.next;
+			}
+			if(found) {
+				if(previous==null) {
+					head= current.next;
+					if(head!=null) {
+						head.prev = null;
+					}
+				}
+				else {
+					previous.next = current.next;
+					if(current != null) {
+						current.next.prev = previous;
+					}
+				}
+			}
 		}
 		
 	}

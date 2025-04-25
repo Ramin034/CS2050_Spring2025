@@ -45,7 +45,7 @@ public class DoubleLinkedListLab
 class NodeL18
 {
 	int data;
-	NodeL18 next;
+	NodeL18 next; // self referential structure
 	NodeL18 prev;
 
 	public NodeL18(int data)

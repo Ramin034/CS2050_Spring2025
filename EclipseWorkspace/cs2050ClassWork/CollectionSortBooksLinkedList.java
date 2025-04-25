@@ -128,6 +128,26 @@ public class CollectionSortBooksLinkedList
     	
     	bookInventory.add(new Book(title, author, year));
     	
+    	//Explore TreeMap
+    	TreeMap<Integer,List<Book>>booksByYear = new TreeMap<>();
+    	for(Book currentBook : bookInventory) {
+    		booksByYear.putIfAbsent(currentBook.getYear(), new ArrayList());
+    		booksByYear.get(currentBook.getYear()).add(currentBook);
+    	}
+    	
+    	for(Map.Entry<Integer, List<Book>>entry : booksByYear.entrySet()) {
+    		System.out.println("\nYear: " + entry.getKey());
+    		for(Book book : entry.getValue()) {
+    			System.out.println(book);
+    		}
+    	}
+    	
+    	SortedMap<Integer, List<Book>>before2018 = booksByYear.headMap(2018);
+    	for(List<Book> book : before2018.values()){
+    		
+    	}
+    	
+    	
     	
     	
     }

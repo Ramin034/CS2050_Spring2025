@@ -28,9 +28,87 @@ import java.io.FileNotFoundException;
 
 public class CarvanaCarVendingMachine {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		
+		Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of floors for the car vending machine: ");
+        int floors = scanner.nextInt();
+        System.out.print("Enter the number of spaces for the car vending machine: ");
+        int spaces = scanner.nextInt();
+        scanner.nextLine();
+        VendingMachine tower = new VendingMachine(floors, spaces);
+        int choice;
+        
+        do {
+        	System.out.println("=== Car Vending Machine Menu ===");
+            System.out.println("1. Load Car Data from File");
+            System.out.println("2. Display Vending Machine");
+            System.out.println("3. Retrieve a Car by Location (Floor & Space)");
+            System.out.println("4. Print Sorted Inventory (Price)");
+            System.out.println("5. Print Sorted Inventory (Year)");
+            System.out.println("6. Search for Cars (Manufacturer & Type)");
+            System.out.println("7. Add Car to Wash Queue");
+            System.out.println("8. Process Car Wash Queue");
+            System.out.println("9. Sell a Car");
+            System.out.println("10. Exit");
+            System.out.println("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            
+            switch(choice) {
+            	case 1:
+            		System.out.println("Enter the file name");
+            		tower.loadFromFile(scanner.nextLine());
+            		break;
+            	case 2:
+            		tower.DisplayVendingMachine();
+            		break;
+            	case 3:
+            		System.out.print("Enter floor: ");
+                    int inputFloor = scanner.nextInt();
+                    System.out.print("Enter space: ");
+                    int inputSpace = scanner.nextInt();
+                    tower.RetrieveCar(inputFloor, inputSpace);
+                    break;
+            	case 4:
+            		tower.SortByPrice();
+            		break;
+            	case 5:
+            		tower.SortByYear();
+            		break;
+            	case 6:
+            		System.out.println("Enter manufacturer: ");
+            		String manufact = scanner.nextLine();
+            		System.out.println("Enter car type (Basic/Premium): ");
+            		String type = scanner.nextLine();
+            		tower.SearchForCar(manufact, type);
+            		break;
+            	case 7:
+            		System.out.println("Enter floor: ");
+            		int washFloor = scanner.nextInt();
+            		System.out.println("Enter space: ");
+            		int washSpace = scanner.nextInt();
+            		tower.addWashQueue(washFloor, washSpace);
+            		break;
+            	case 8:
+            		tower.ProcessWashQueue();
+            		break;
+            	case 9:
+            		System.out.println("Enter floor of the car to sell: ");
+            		int sFloor = scanner.nextInt();
+            		System.out.println("Enter space of the car to sell: ");
+            		int sSpace = scanner.nextInt();
+            		tower.SellingCar(sFloor, sSpace);
+            		break;
+            	case 10:
+            		System.out.println("Exiting program. Goodbye!");
+            		break;
+            	default:
+            		System.out.println("Invalid choice. Please try again.");
+            }
+            
+            
+        }while(choice != 10);
 
 	}
 
@@ -69,7 +147,7 @@ abstract class Car{
 	
 	@Override
 	public String toString() {
-		return make + " "+ carName + " "+ year + " - $" + price;
+		return getType() + " Car: " + make + " "+ carName + " "+ year + " - $" + price;
 	}
 	
 }
@@ -127,6 +205,9 @@ class VendingMachine{
 				else if(carType.equals("P")) {
 					cars = new PremiumCar(carName, make, year, price);
 				}
+				if(cars != null) {
+					addCar(floor, space, cars);
+				}
 			}
 			inputFile.close();
 		} 
@@ -163,6 +244,118 @@ class VendingMachine{
 		}
 	}
 	
+	public void DisplayVendingMachine() {
+		if(carTower.isEmpty()) {
+			System.out.println("Vending machine is empty.");
+		}
+		else {
+			for(Map.Entry<String, Car> entry : carTower.entrySet()) {
+				String key = entry.getKey();
+				String[] keyArray = key.split("-");
+				int floor = Integer.parseInt(keyArray[0]);
+				int space = Integer.parseInt(keyArray[1]);
+				Car car = entry.getValue();
+				System.out.println(car.getType() + " Car: "
+			              + car.getMake() + " " + car.getCarName()
+			              + " " + car.getYear() + " - $" + car.getPrice()
+			              + " (Floor: " + floor + ", Space: " + space + ")");
+			}
+		}
+		
+	}
+	
+	public void RetrieveCar(int floor, int space) {
+		String key = floor + "-" + space;
+        if (!carTower.containsKey(key)) {
+            System.out.println("Car not found at this location.");
+        } else {
+            Car car = carTower.remove(key);
+            System.out.println("Car retrieved: " + car + " (Floor: " + floor + ", Space: " + space + ")");
+        }
+	}
+	
+	
+	public void Sorting(Comparator <Car> comparing, String option) {
+		List<Car> cars = new ArrayList<>(carTower.values());
+		cars.sort(comparing);
+		for (Car sortedCar : cars) {
+            System.out.println(sortedCar);
+        }
+        System.out.println();
+		
+	}
+	
+	public void SortByPrice() {
+		Sorting(Comparator.comparing(Car :: getPrice), "Sorted Inventory By Price");
+	}
+	
+	public void SortByYear() {
+		Sorting(Comparator.comparing(Car :: getYear), "Sorted Inventory By Year");
+	}
+	
+	public void SearchForCar(String manufacturer, String type) {
+		List<Car> foundCars = findCars(new ArrayList<>(carTower.values()), manufacturer, type);
+        printCars(foundCars, manufacturer, type);
+		
+	}
+	
+	public static List<Car> findCars(List<Car> inventory, String manufacturer, String type){
+		List<Car> results = new ArrayList<>();
+		
+		for(Car cars : inventory) {
+			if(cars.getMake().equalsIgnoreCase(manufacturer) && cars.getType().equalsIgnoreCase(type)) {
+				results.add(cars);
+			}
+		}
+		return results;
+	}
+	
+	public static void printCars(List<Car> cars, String manufacturer, String type) {
+	    if (cars.isEmpty()) {
+	    	System.out.println("No cars available.");
+	    	} else {
+	            for (Car currentCar : cars) {
+	                System.out.println(currentCar);
+	            }
+	        }
+	    System.out.println();
+	 }
+	
+	public void addWashQueue(int floor, int space) {
+		String key = floor + "-" + space;
+		if(!carTower.containsKey(key)) {
+			System.out.println("Car not found at this location.");
+		}
+		Car cars = carTower.remove(key);
+		
+		System.out.println();
+		System.out.println("Car retrieved: " + cars + " (Floor: " + floor + ", Space: " + space + ")");
+		carWashQueue.add(cars);
+		System.out.println("Car added to wash queue");
+		System.out.println();
+	}
+	
+	public void ProcessWashQueue() {
+		if (carWashQueue.isEmpty()) {
+	        System.out.println("No cars in the wash queue.");
+	    } else {
+	        System.out.println("Processing washes:");
+	        while (!carWashQueue.isEmpty()) {
+	            System.out.println("Washing: " + carWashQueue.remove());
+	        }
+	    }
+	    System.out.println();
+	}
+	
+	public void SellingCar(int floor, int space) {
+		String key = floor + "-" + space;
+        if (!carTower.containsKey(key)) {
+            System.out.println("No car found at Floor " + floor + " Space " + space + ".");
+        } else {
+            Car car = carTower.remove(key);
+            System.out.println("Car Sold: " + car + " (Floor: " + floor + ", Space: " + space + ")");
+        }
+	}
 	
 	
 }

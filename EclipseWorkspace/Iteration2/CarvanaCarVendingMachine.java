@@ -1,5 +1,5 @@
 /** @author Ramin Akbari
- * @version 3/28/25
+ * @version 4/28/25
  */
 
 
@@ -20,14 +20,22 @@ import java.io.FileNotFoundException;
 * retrieve car
 * sort cars by price
 * sort cars by year
+* searches for car
+* queues for a car wash
+* sells cars
 * 
-* default constructor for CarVendingMachine class
+* default constructor for CarvanaCarVendingMachine class
 * initializes the vending machine system
 */
 
 
 public class CarvanaCarVendingMachine {
-
+	
+	/**
+	 * launches main menu to interact and select options for the vending machine
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		Scanner scanner = new Scanner(System.in);
@@ -114,12 +122,23 @@ public class CarvanaCarVendingMachine {
 
 }
 
+/**
+ * Abstract base class for car.
+ * Subclasses must specify car type (Basic, Premium).
+ */
 abstract class Car{
 	private String carName;
 	private String make;
 	private int year;
 	private double price;
 	
+	/**
+	 * constructs a car with the following parameters
+	 * @param carName the model name of the car
+	 * @param make the manufacturer of the car
+	 * @param year the year of the car
+	 * @param price the price of the car
+	 */
 	public Car(String carName, String make, int year, double price) {
 		this.carName =  carName;
 		this.make = make;
@@ -143,6 +162,10 @@ abstract class Car{
 		return price;
 	}
 	
+	/**
+	 * Defines the type of car Basic or Premium
+	 * @return a string indicating if it is Basic or Premium
+	 */
 	public abstract String getType();
 	
 	@Override
@@ -185,6 +208,10 @@ class VendingMachine{
 		this.spaces = spaces;
 	}
 	
+	/**
+	 * The loadFromFile method takes in a filename and saves the data from the file
+	 * @param filename
+	 */
 	public void loadFromFile(String filename) {
 		try {
 			File inputFileName = new File(filename);
@@ -221,6 +248,13 @@ class VendingMachine{
 		}
 	}
 	
+	/**
+	 * adds car into the hashmap by checking if the location to store the car is 
+	 * out of bounds or if the spot is already occupied
+	 * @param floor
+	 * @param space
+	 * @param car
+	 */
 	public void addCar(int floor, int space, Car car) {
 		if(floor < 1 || floor > floors || space < 1 || space > spaces) {
 			System.out.println("Error: Invalid position at Floor " + floor +
@@ -244,6 +278,12 @@ class VendingMachine{
 		}
 	}
 	
+	
+	/**
+	 * The DisplayVendingMachine method displays all cars currently 
+	 * stored in the vending machine.
+     * Only occupied slots are shown.
+	 */
 	public void DisplayVendingMachine() {
 		if(carTower.isEmpty()) {
 			System.out.println("Vending machine is empty.");
@@ -264,6 +304,12 @@ class VendingMachine{
 		
 	}
 	
+	/**
+     * Removes and reports the car at a chosen location.
+     * 
+     * @param floor this is the floor number of the location
+     * @param space this is the space number of the location
+     */
 	public void RetrieveCar(int floor, int space) {
 		String key = floor + "-" + space;
         if (!carTower.containsKey(key)) {
@@ -274,7 +320,12 @@ class VendingMachine{
         }
 	}
 	
-	
+	/**
+     * purpose is to help with sorting helper (unused option string parameter).
+     *
+     * @param comparing comparator for sorting
+     * @param option descriptive header
+     */
 	public void Sorting(Comparator <Car> comparing, String option) {
 		List<Car> cars = new ArrayList<>(carTower.values());
 		cars.sort(comparing);
@@ -285,20 +336,36 @@ class VendingMachine{
 		
 	}
 	
+	/** Sorts and prints inventory by price (low to high). */
 	public void SortByPrice() {
 		Sorting(Comparator.comparing(Car :: getPrice), "Sorted Inventory By Price");
 	}
 	
+	 /** Sorts and prints inventory by year (oldest to newest). */
 	public void SortByYear() {
 		Sorting(Comparator.comparing(Car :: getYear), "Sorted Inventory By Year");
 	}
 	
+	/**
+     * Does a search by manufacturer and type.
+     *
+     * @param manufacturer the make to match
+     * @param type         "Basic" or "Premium"
+     */
 	public void SearchForCar(String manufacturer, String type) {
 		List<Car> foundCars = findCars(new ArrayList<>(carTower.values()), manufacturer, type);
         printCars(foundCars, manufacturer, type);
 		
 	}
 	
+	/**
+     * Filters a list of cars by make and type.
+     *
+     * @param inventory    list of cars to search
+     * @param manufacturer case-insensitive make to match
+     * @param type         case-insensitive type to match
+     * @return list of matching cars
+     */
 	public static List<Car> findCars(List<Car> inventory, String manufacturer, String type){
 		List<Car> results = new ArrayList<>();
 		
@@ -310,6 +377,13 @@ class VendingMachine{
 		return results;
 	}
 	
+	/**
+     * Prints the results of a search, or a no cars available message.
+     *
+     * @param cars         list of cars to print
+     * @param manufacturer the make used in search
+     * @param type         the type used in search
+     */
 	public static void printCars(List<Car> cars, String manufacturer, String type) {
 	    if (cars.isEmpty()) {
 	    	System.out.println("No cars available.");
@@ -321,6 +395,12 @@ class VendingMachine{
 	    System.out.println();
 	 }
 	
+	/**
+     * Enqueues a car for washing and reports the action.
+     *
+     * @param floor which floor the car is located
+     * @param space which space the car is located
+     */
 	public void addWashQueue(int floor, int space) {
 		String key = floor + "-" + space;
 		if(!carTower.containsKey(key)) {
@@ -335,6 +415,10 @@ class VendingMachine{
 		System.out.println();
 	}
 	
+	/** 
+     * Processes the wash queue, washing each car in FIFO order.
+     * If the queue is empty, prints a prompt instead.
+     */
 	public void ProcessWashQueue() {
 		if (carWashQueue.isEmpty()) {
 	        System.out.println("No cars in the wash queue.");
@@ -347,6 +431,12 @@ class VendingMachine{
 	    System.out.println();
 	}
 	
+	/**
+     * Removes and reports a car sale at the specified position.
+     *
+     * @param floor where the floor is located
+     * @param space where the space is located
+     */
 	public void SellingCar(int floor, int space) {
 		String key = floor + "-" + space;
         if (!carTower.containsKey(key)) {
